@@ -1,0 +1,86 @@
+---
+import '@/styles/globals.css';
+import { Button } from '@/components/ui/button';
+import { ColorPicker } from "@/components/ui/colorPicker"
+import { ModeToggle } from '@/components/ui/ModeToggle';
+import { 
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle
+} from "@/components/ui/card";
+import ColorRow  from '@/components/ui/ColorRow/index' 
+
+---
+
+<script is:inline>
+	const getThemePreference = () => {
+		if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+			return localStorage.getItem('theme');
+		}
+		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+	};
+	const isDark = getThemePreference() === 'dark';
+	document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
+ 
+	if (typeof localStorage !== 'undefined') {
+		const observer = new MutationObserver(() => {
+			const isDark = document.documentElement.classList.contains('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+		});
+		observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+	}
+</script>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body class="min-h-screen">
+		<header class="w-full px-6 py-6 border-b-2 flex justify-between">
+			<div>
+				<h1 class="mb-2 font-bold tracking-wide text-4xl max-w-fit bg-gradient-to-r to-yellow-400 from-red-600 bg-clip-text text-transparent">Chroma</h1>
+				<h6 class="">A pretty cool color tool</h6>
+			</div>
+			<ModeToggle client:load/>
+		</header>
+		<main class="flex flex-col gap-6 justify-center align-middle my-4 mx-4 sm:mx-20 md:mx-24 lg:mx-44">
+			<Card className="mx-0 px-0">
+				<CardHeader>
+					<CardTitle>Step 1</CardTitle>
+					<CardDescription>Choose your pallete</CardDescription>
+				</CardHeader>
+				<CardContent className="mx-0 px-0">
+					<ColorRow client:only/>
+					<ColorRow client:only/>
+					<ColorRow client:only/>
+				</CardContent>
+				<CardFooter className="flex justify-center gap-3">
+					<ColorPicker client:only/>
+					<Button className="w-24 " variant="outline">Add color</Button>
+				</CardFooter>
+			</Card>
+
+
+			<Card>
+				<CardHeader>
+					<CardTitle>Step 2</CardTitle>
+					<CardDescription>Choose your pallete</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<p>List of color selectors.</p>
+				</CardContent>
+				<CardFooter className="flex justify-center gap-3">
+					<ColorPicker client:only/>
+					<Button className="w-24 " variant="outline">Add color</Button>
+				</CardFooter>
+			</Card>
+		</main>
+	</body>
+</html>
